@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delta PMT — Project Management Tools (prototype)</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <div class="proto-banner">PROTOTYPE · mock data · no backend · AI output is static · switch “View as” to see each role's POV</div>
+  <div id="feedbackWidget"></div>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <header class="topbar" id="topbar"></header>
+      <section class="content" id="content"></section>
+    </main>
+  </div>
+
+  <!-- Plain scripts (no modules) so it works from file:// -->
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="assets/screens/tour.js"></script>
+  <script src="assets/screens/dashboard.js"></script>
+  <script src="assets/screens/items.js"></script>
+  <script src="assets/screens/requests.js"></script>
+  <script src="assets/screens/thread.js"></script>
+  <script src="assets/screens/prd.js"></script>
+  <script src="assets/screens/solution.js"></script>
+  <script src="assets/screens/sprints.js"></script>
+  <script src="assets/screens/feedback.js"></script>
+  <script src="assets/screens/panels.js"></script>
+  <script src="assets/screens/board.js"></script>
+  <script src="assets/screens/releases.js"></script>
+  <script src="assets/screens/knowledge.js"></script>
+  <script src="assets/screens/incidents.js"></script>
+  <script src="assets/screens/backoffice.js"></script>
+  <script src="assets/screens/files.js"></script>
+  <script src="assets/screens/projects.js"></script>
+  <script>App.start();</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lens demo — satu item, banyak sudut pandang</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f6f7f9; color: #1d2330; }
+  header { background: #111827; color: #fff; padding: 16px 24px; }
+  header h1 { margin: 0; font-size: 18px; }
+  header p { margin: 4px 0 0; color: #9ca3af; font-size: 13px; }
+  .lenses { display: flex; gap: 8px; padding: 16px 24px 0; flex-wrap: wrap; }
+  .lens-btn { border: 2px solid #e3e6ea; background: #fff; border-radius: 999px; padding: 8px 16px; cursor: pointer; font-weight: 600; }
+  .lens-btn.on { border-color: #4f46e5; background: #4f46e5; color: #fff; }
+  .mode { margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 13px; }
+  .wrap { padding: 16px 24px 40px; }
+  .itemhead { background: #fff; border: 1px solid #e3e6ea; border-radius: 10px; padding: 14px 18px; margin-bottom: 12px; }
+  .stepper { display: flex; gap: 4px; margin-top: 10px; }
+  .step { flex: 1; font-size: 11px; text-align: center; padding: 5px; border-radius: 5px; background: #eceef2; color: #6b7280; }
+  .step.done { background: #dcfce7; color: #166534; } .step.on { background: #4f46e5; color: #fff; font-weight: 700; }
+  .quick { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .quick span { background: #fff; border: 1px dashed #c7d2fe; color: #4f46e5; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+  .layout { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+  .slot-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #9ca3af; margin: 0 0 4px; }
+  .panel { background: #fff; border: 1px solid #e3e6ea; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; transition: all .25s; }
+  .panel h3 { margin: 0 0 8px; font-size: 14px; }
+  .hero { border: 2px solid #4f46e5; box-shadow: 0 4px 14px rgba(79,70,229,.12); }
+  .hero h3 { font-size: 17px; }
+  .big { font-size: 28px; font-weight: 800; }
+  .muted { color: #6b7280; } .small { font-size: 12px; }
+  .bar { height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; } .bar > i { display: block; height: 100%; background: #4f46e5; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: #eef0f3; }
+  .red { background: #fee2e2; color: #b91c1c; } .green { background: #dcfce7; color: #15803d; } .amber { background: #fef3c7; color: #b45309; } .violet { background: #eef0ff; color: #4f46e5; }
+  table { width: 100%; border-collapse: collapse; } td { padding: 5px 4px; border-bottom: 1px solid #f0f1f3; vertical-align: top; }
+  .btn { display: inline-block; padding: 5px 12px; border-radius: 6px; border: 1px solid #e3e6ea; background: #fff; font-size: 12px; cursor: pointer; }
+  .btn.primary { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; }
+  .ai { border-left: 3px solid #4f46e5; background: #fafaff; padding: 8px 10px; font-size: 13px; }
+  .explain { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; font-size: 13px; }
+  .drawer { position: fixed; top: 0; right: -420px; width: 400px; height: 100vh; background: #fff; box-shadow: -8px 0 24px rgba(0,0,0,.15); padding: 20px; transition: right .25s; overflow-y: auto; }
+  .drawer.open { right: 0; }
+  .compare { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .compare .col { background: #fff; border: 1px solid #e3e6ea; border-radius: 10px; padding: 10px; font-size: 12px; }
+  .compare .col h4 { margin: 0 0 6px; }
+  .mini { border-radius: 6px; padding: 6px; margin-bottom: 6px; background: #f3f4f6; }
+  .mini.hero { background: #eef0ff; border: 2px solid #4f46e5; box-shadow: none; font-weight: 600; }
+</style>
+</head>
+<body>
+<div style="background:#111827;color:#fff;padding:8px 16px;font:13px system-ui"><a href="index.html#/tour" style="color:#c7d2fe">← Kembali ke prototype (tour)</a> · <a href="index.html#/p/p-payflow/item/PAY-20?as=u6" style="color:#c7d2fe">buka PAY-20 asli sebagai Dev</a> · <a href="index.html#/p/p-payflow/item/PAY-20?as=u4" style="color:#c7d2fe">sebagai Business</a></div>
+<header>
+  <h1>Lens demo: satu item yang sama, dilihat dari 4 sudut pandang</h1>
+  <p>Item <b>PAY-20 · Invoice PDF &lt; 5 detik</b> · tahap <b>Development</b>. Datanya sama persis. Yang berubah hanya <b>apa yang ditonjolkan, urutannya, dan bahasanya</b>.</p>
+</header>
+
+<div class="lenses">
+  <button class="lens-btn on" data-lens="pm">📋 PM</button>
+  <button class="lens-btn" data-lens="dev">💻 Developer</button>
+  <button class="lens-btn" data-lens="qa">🧪 QA</button>
+  <button class="lens-btn" data-lens="biz">💼 Business</button>
+  <button class="lens-btn" data-lens="all">🔍 Bandingkan semua</button>
+  <label class="mode"><input type="checkbox" id="intern"> Lihat sebagai <b>intern</b></label>
+</div>
+
+<div class="wrap">
+  <div class="explain" id="explain"></div>
+  <div id="view"></div>
+</div>
+
+<div class="drawer" id="drawer"><button class="btn" onclick="drawer.classList.remove('open')">✕ Tutup</button><div id="drawerBody"></div></div>
+
+<script>
+const PANELS = {
+  pmProgress: () => `<h3>Progress vs rencana</h3><div class="big">2 / 3 task</div><div class="bar"><i style="width:66%"></i></div>
+    <p class="small">Rencana selesai dev: 6 Nov · proyeksi: <b>8 Nov</b> <span class="tag amber">+2 hari</span></p>
+    <div class="ai">🤖 Ada perubahan scope di rev 2 (AC2: invoice 2.000 baris). Rewind sudah dilakukan; tidak perlu rewind lagi. Rilis v3.8.0 tertahan karena item ini.</div>`,
+  pmRisk: () => `<h3>Blocker & risiko</h3><table>
+    <tr><td><span class="tag red">blocker</span></td><td>T13 paging belum ada test</td></tr>
+    <tr><td><span class="tag amber">risiko</span></td><td>AC2 tanpa task QA</td></tr></table>`,
+  pmApprovals: () => `<h3>Approval & keputusan</h3><div class="small">✔ PRD rev 2: Hendra, Rina (2 Nov)<br>✔ Solution: Budi (10 Okt)<br>🧭 "Paging memperluas streaming, bukan desain baru"</div>
+    <div style="margin-top:8px"><button class="btn needs-perm" data-perm="amend">✎ Amend</button> <button class="btn needs-perm" data-perm="advance">Advance →</button></div>`,
+  devTasks: () => `<h3>Task saya & PR</h3><table>
+    <tr><td>✔ Stream PDF rendering</td><td><span class="tag green">done</span></td></tr>
+    <tr><td>● Paged rendering &gt;500 baris <span class="tag violet">+ rev 2</span></td><td><span class="tag amber">in progress</span></td></tr>
+    <tr><td>○ Template cache</td><td><span class="tag">todo</span></td></tr></table>
+    <p class="small" style="font-family:monospace">⎇ feat/PAY-20-pdf-stream · PR #422<br>· a1f3c2e Stream PDF rendering<br>· 9c27e04 Paged rendering <span class="tag violet">+ rev 2</span></p>`,
+  devContext: () => `<h3>Context pack</h3><div class="small"><b>Kenapa ada:</b> invoice besar butuh ~20 detik untuk dikirim.<br><b>Aturan:</b> PDF &lt; 5s (≤500 baris), &lt; 10s (≤2.000 baris)<br><b>Arsitektur:</b> ledger writer dipakai bersama (lihat W-9)</div>
+    <div class="ai" style="margin-top:8px">🤖 Yang berubah untukmu di rev 2: hanya T13 dan AC2. Sisanya tetap.</div>`,
+  devFindings: () => `<h3>QA finding terbuka</h3><p class="small muted">Belum ada.</p><button class="btn needs-perm" data-perm="advance">Tandai siap review</button>`,
+  qaIncoming: () => `<h3>Yang akan masuk QA</h3><table>
+    <tr><td>AC1</td><td>PDF 500 baris &lt; 5 detik</td><td><span class="tag">belum dites</span></td></tr>
+    <tr><td>AC2 <span class="tag violet">baru</span></td><td>PDF 2.000 baris &lt; 10 detik</td><td><span class="tag">belum dites</span></td></tr></table>
+    <p class="small">Perkiraan masuk QA: <b>8 Nov</b></p>`,
+  qaEdge: () => `<h3>Draf test plan</h3><div class="ai">🤖 Saran edge case: tepat 500 baris · 501 baris (pindah ke paging) · 2.000 baris · invoice dengan gambar logo besar · 2 permintaan PDF bersamaan</div>
+    <div style="margin-top:8px"><button class="btn needs-perm" data-perm="testplan">Approve test plan</button></div>`,
+  qaHistory: () => `<h3>Riwayat bug area ini</h3><div class="small">Belum ada insiden di modul PDF.</div>`,
+  bizStatus: () => `<h3>Status</h3><div class="big">Sedang dikerjakan</div><p>Langkah 5 dari 10. Fitur ini ikut <b>rilis v3.8.0</b>, diperkirakan <b>12 November</b> (mundur 5 hari).</p>`,
+  bizWhy: () => `<h3>Kenapa mundur?</h3><p>Ada tambahan kebutuhan: invoice besar (sampai 2.000 baris) juga harus cepat. Tambahan ini disetujui oleh Hendra pada 2 Nov.</p>`,
+  bizAsk: () => `<h3>Tanya AI</h3><div class="ai">"Apakah pelanggan enterprise sudah bisa pakai?" → Belum. Mulai 12 Nov setelah rilis.</div>`,
+};
+const LENS = {
+  pm:  { name: "PM",        hero: ["pmProgress"], main: ["pmRisk"], side: ["pmApprovals"], perms: ["amend", "advance"],
+         why: "PM perlu tahu: <b>apakah sesuai rencana, apa yang menghambat, perlukah rewind</b>. Detail kode tidak ditonjolkan, tapi tetap bisa dibuka lewat bar di atas." },
+  dev: { name: "Developer", hero: ["devTasks"], main: ["devContext"], side: ["devFindings"], perms: ["advance"],
+         why: "Developer perlu tahu: <b>apa yang harus saya kerjakan, di branch mana, dan aturan apa yang tidak boleh dilanggar</b>. Jadwal rilis dan approval tidak ditonjolkan." },
+  qa:  { name: "QA",        hero: ["qaIncoming"], main: ["qaEdge"], side: ["qaHistory"], perms: ["testplan"],
+         why: "QA perlu bersiap: <b>apa yang akan dites dan edge case apa yang mungkin</b>, bahkan sebelum item masuk QA." },
+  biz: { name: "Business",  hero: ["bizStatus"], main: ["bizWhy"], side: ["bizAsk"], perms: [],
+         why: "Business perlu jawaban singkat dalam bahasa bisnis: <b>kapan bisa dipakai pelanggan dan kenapa</b>. Tidak ada istilah teknis." },
+};
+const QUICK = ["📄 PRD", "✅ Acceptance criteria", "▦ Tasks", "⇄ PR & commits", "🧪 Tests", "🗂 Files", "🕘 History", "✎ Amendments"];
+const DRAWER = { "📄 PRD": "<h3>PRD — Invoice PDF</h3><p>Target: PDF &lt; 5s untuk ≤500 baris.</p><p style='background:#dcfce7'>+ AC2 PDF 2.000 baris &lt; 10s (rev 2)</p>" };
+let lens = "pm";
+const view = document.getElementById("view"), explain = document.getElementById("explain"), drawer = document.getElementById("drawer");
+
+function head() {
+  const st = ["Request", "Requirement", "Solution", "Breakdown", "Development", "Review", "QA", "Release", "Production", "Learning"];
+  return `<div class="itemhead"><b>PAY-20 · Invoice PDF generated under 5 seconds</b> <span class="tag amber">rev 2</span>
+    <div class="stepper">${st.map((s, i) => `<div class="step ${i < 4 ? "done" : i === 4 ? "on" : ""}">${s}</div>`).join("")}</div></div>
+    <div class="quick"><span class="small muted" style="border:0;background:none;color:#6b7280">Selalu 1 klik:</span>${QUICK.map((q) => `<span data-q="${q}">${q}</span>`).join("")}</div>`;
+}
+function panel(id, cls = "") { return `<div class="panel ${cls}">${PANELS[id]()}</div>`; }
+function render() {
+  document.querySelectorAll(".lens-btn").forEach((b) => b.classList.toggle("on", b.dataset.lens === lens));
+  const intern = document.getElementById("intern").checked;
+  if (lens === "all") {
+    explain.innerHTML = "Ini <b>matriks</b> untuk satu tahap (Development). Kotak biru = <b>hero</b> (yang paling ditonjolkan). Setiap tahap punya matriksnya sendiri, dan nanti kita akan desain satu per satu.";
+    view.innerHTML = head() + `<div class="compare">${Object.entries(LENS).map(([k, l]) => `<div class="col"><h4>${l.name}</h4>
+      ${l.hero.map((p) => `<div class="mini hero">HERO · ${PANELS[p]().match(/<h3>(.*?)<\/h3>/)[1]}</div>`).join("")}
+      ${l.main.map((p) => `<div class="mini">MAIN · ${PANELS[p]().match(/<h3>(.*?)<\/h3>/)[1]}</div>`).join("")}
+      ${l.side.map((p) => `<div class="mini">SIDE · ${PANELS[p]().match(/<h3>(.*?)<\/h3>/)[1]}</div>`).join("")}</div>`).join("")}</div>`;
+  } else {
+    const l = LENS[lens];
+    explain.innerHTML = `<b>Lens ${l.name}:</b> ${l.why}${intern ? "<br>🎓 <b>Intern:</b> tampilannya sama, tapi tombol approval dikunci beserta alasannya (lapisan <i>permission</i>, bukan lens)." : ""}`;
+    view.innerHTML = head() + `<div class="layout"><div><p class="slot-label">Hero</p>${l.hero.map((p) => panel(p, "hero")).join("")}<p class="slot-label">Main</p>${l.main.map((p) => panel(p)).join("")}</div>
+      <div><p class="slot-label">Side</p>${l.side.map((p) => panel(p)).join("")}</div></div>`;
+    view.querySelectorAll(".needs-perm").forEach((b) => {
+      const ok = l.perms.includes(b.dataset.perm) && !(intern && ["amend", "testplan"].includes(b.dataset.perm));
+      if (!ok) { b.disabled = true; b.title = intern ? "Dikunci untuk intern" : "Role ini tidak punya izin"; b.textContent = "🔒 " + b.textContent; }
+    });
+  }
+  view.querySelectorAll("[data-q]").forEach((q) => (q.onclick = () => { document.getElementById("drawerBody").innerHTML = DRAWER[q.dataset.q] || `<h3>${q.dataset.q}</h3><p class="muted">Isi lengkap terbuka di sini tanpa meninggalkan halaman.</p>`; drawer.classList.add("open"); }));
+}
+document.querySelectorAll(".lens-btn").forEach((b) => (b.onclick = () => { lens = b.dataset.lens; render(); }));
+document.getElementById("intern").onchange = render;
+render();
+</script>
+</body>
+</html>

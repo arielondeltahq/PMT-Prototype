@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Delta PMT — Demo alur: Request → siap Development</title>
+<style>
+  :root { --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#4f46e5; --soft:#eef2ff; --pass:#15803d; --fail:#b91c1c; --warn:#b45309; --new:#fef08a; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink); background:#f6f7f9; }
+  header { background:#111827; color:#fff; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+  header b { font-size:16px; } header .muted { color:#9ca3af; }
+  .wrap { max-width:1180px; margin:0 auto; padding:20px 24px 80px; }
+  .steps { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .steps button { flex:1; min-width:170px; text-align:left; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 12px; cursor:pointer; font:inherit; }
+  .steps button.on { border-color:var(--accent); box-shadow:0 0 0 2px var(--soft); }
+  .steps button small { display:block; color:var(--muted); }
+  .steps .n { display:inline-block; width:22px; height:22px; border-radius:50%; background:#e5e7eb; text-align:center; font-weight:700; font-size:12px; line-height:22px; margin-right:6px; }
+  .steps button.on .n { background:var(--accent); color:#fff; } .steps button.past .n { background:#bbf7d0; color:var(--pass); }
+  .story { background:#fff; border-left:4px solid var(--accent); border-radius:8px; padding:12px 16px; margin-bottom:16px; }
+  .story h2 { margin:0 0 4px; font-size:17px; }
+  .thread { display:flex; gap:4px; margin:10px 0 16px; flex-wrap:wrap; }
+  .thread span { padding:4px 10px; border-radius:999px; background:#e5e7eb; color:var(--muted); font-size:12px; font-weight:600; }
+  .thread span.done { background:#dcfce7; color:var(--pass); } .thread span.cur { background:var(--accent); color:#fff; }
+  .grid { display:grid; grid-template-columns: 2fr 1fr; gap:16px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:16px; position:relative; }
+  .card h3 { margin:0 0 8px; font-size:15px; }
+  .card.empty { border-style:dashed; background:#fafafa; color:var(--muted); }
+  .new { outline:3px solid var(--new); outline-offset:2px; }
+  .new::after { content:"BARU di langkah ini"; position:absolute; top:-10px; right:10px; background:#facc15; color:#422006; font-size:11px; font-weight:700; padding:1px 8px; border-radius:999px; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:600; background:#eef0f3; color:#374151; white-space:nowrap; }
+  .b-pass { background:#dcfce7; color:var(--pass); } .b-fail { background:#fee2e2; color:var(--fail); } .b-warn { background:#fef3c7; color:var(--warn); } .b-ai { background:var(--soft); color:var(--accent); }
+  table { border-collapse:collapse; width:100%; font-size:13px; } td, th { border-bottom:1px solid var(--line); padding:6px 6px; text-align:left; vertical-align:top; } th { color:var(--muted); font-weight:600; }
+  .small { font-size:12.5px; } .muted { color:var(--muted); } .mono { font-family:ui-monospace,Menlo,monospace; font-size:12px; }
+  .gate li { list-style:none; margin:4px 0; } .gate { padding:0; margin:0; }
+  .note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 12px; font-size:13px; }
+  .who { display:inline-block; width:22px; height:22px; border-radius:50%; background:#c7d2fe; color:#3730a3; text-align:center; font-size:11px; font-weight:700; line-height:22px; margin-right:4px; }
+  .msg { display:flex; gap:8px; margin:8px 0; } .msg div { background:#f3f4f6; border-radius:8px; padding:6px 10px; font-size:13px; }
+  .btn { display:inline-block; border:1px solid var(--line); background:#fff; border-radius:8px; padding:6px 12px; font:inherit; font-size:13px; cursor:pointer; }
+  .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; } .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .nav { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--line); padding:10px 24px; display:flex; justify-content:center; gap:12px; align-items:center; }
+  .cols { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; } .col { background:#f3f4f6; border-radius:8px; padding:8px; min-height:120px; } .col h4 { margin:0 0 6px; font-size:12px; color:var(--muted); }
+  .tk { background:#fff; border:1px solid var(--line); border-radius:6px; padding:6px 8px; margin-bottom:6px; font-size:12px; }
+  mark { background:var(--new); }
+  @media (max-width: 860px) { .grid { grid-template-columns:1fr; } .cols { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div><b>◆ Delta PMT</b> <span class="muted">— demo alur satu item, dari request sampai siap development</span></div>
+  <div class="small"><a href="index.html#/tour" style="color:#c7d2fe">← Kembali ke prototype (tour)</a> · <span class="muted">klik langkah atau tombol ← →</span></div>
+</header>
+<div class="wrap">
+  <div class="note" style="margin-bottom:12px">🎬 <b>Simulasi perjalanan PAY-23 ke depan.</b> Di prototype interaktif, PAY-23 saat ini ada di antara langkah 1 dan 2: PRD masih draft (“3 months”) dan arsip kickoff AR-3 sudah ada (“max 2 months”). Langkah 2–5 di sini memperlihatkan apa yang terjadi setelahnya. Tombol “Coba di prototype” membuka halaman nyata yang setara.</div>
+  <div class="steps" id="steps"></div>
+  <div id="view"></div>
+</div>
+<div class="nav"><button class="btn" id="prev">← Sebelumnya</button><span class="small muted" id="pos"></span><button class="btn primary" id="next">Berikutnya →</button></div>
+
+<script>
+const STAGES = ["Requirement", "Solution", "Breakdown", "Development", "Review", "QA", "Release", "Production", "Learning"];
+const U = { yoga: ["Y", "Yoga (PM)"], hendra: ["H", "Hendra (Business)"], dewi: ["D", "Dewi (Eng Lead)"], budi: ["B", "Budi (Lead Dev)"], andi: ["A", "Andi (Dev)"], nadia: ["N", "Nadia (Dev, intern)"], sari: ["S", "Sari (Lead QA)"], tono: ["T", "Tono (QA)"] };
+const who = (k) => `<span class="who" title="${U[k][1]}">${U[k][0]}</span>${U[k][1]}`;
+const b = (t, c = "") => `<span class="badge ${c}">${t}</span>`;
+const gate = (rows) => `<ul class="gate">${rows.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${t}</li>`).join("")}</ul>`;
+const card = (title, body, isNew, cls = "") => `<div class="card ${cls} ${isNew ? "new" : ""}"><h3>${title}</h3>${body}</div>`;
+
+const AC = [["AC1", "Customer can pause a subscription for 1–3 months"], ["AC2", "No invoice is issued while paused"], ["AC3", "Billing resumes automatically on the resume date"], ["AC4", "Customer and finance get an email on pause and resume"], ["AC5", "Pause is visible in subscription history"]];
+
+// ---------- shared blocks ----------
+const requestsCard = (isNew) => card("📥 Request terkait", `
+  <div class="small">${b("REQ-5")} <b>Kopi Kita Group</b> ${b("Existing client")} · ${b("Existing-client churn risk", "b-fail")} · urgensi ${b("Medium", "b-warn")}</div>
+  <div class="small muted mt">“In low season we want to pause, and invoices on resume must arrive fast.”</div>
+  <div class="small" style="margin-top:6px">Sinyal demand: 1 customer · 1 churn risk</div>`, isNew);
+
+const prdCard = (state, isNew) => state === 0
+  ? card("📝 PRD", `<p class="small">${b("not written", "b-fail")} Belum ada PRD.</p><button class="btn primary">✎ Write PRD</button> <span class="small muted">template otomatis diisi dari REQ-5</span>`, isNew, "empty")
+  : card("📝 PRD-PAY-23", `
+    <div>${b("Published v1", "b-pass")} ${b("v1")} <span class="small muted">· oleh ${U.yoga[1]} · 2026-11-10 — “Initial PRD”</span></div>
+    <div class="small" style="margin:6px 0">✅ ${AC.length} acceptance criteria · 🎨 1 Figma · 💬 0 open comments (2 resolved) · 📄 wiki W-PRD-PAY-23 · ${b("issue #431 ✓", "b-pass")}</div>
+    <table>${AC.map(([id, t]) => `<tr><td class="mono">${id}</td><td>${t}</td></tr>`).join("")}</table>
+    <div class="small muted" style="margin-top:6px">Review: ${who("hendra")} ✔ · ${who("dewi")} ✔ → semua approve, jadi dipublish tanpa “force”.</div>`, isNew);
+
+const solutionCard = (isNew) => card("🧭 Solution — kartu keputusan", `
+  <div>${b("Approved", "b-pass")} <span class="small muted">${who("budi")} ✔ · ${who("dewi")} ✔ (wajib Eng Lead karena ada perubahan skema)</span></div>
+  <table style="margin-top:8px">
+    <tr><th style="width:150px">Pendekatan</th><td>Status baru <span class="mono">paused</span> pada subscription. Invoice scheduler melewati subscription yang paused. Job harian mengaktifkan kembali saat <span class="mono">paused_until</span> tiba.</td></tr>
+    <tr><th>Bagian yang disentuh</th><td><span class="mono">payflow-api</span> modul billing &amp; scheduler · <span class="mono">payflow-web</span> halaman subscription · email template</td></tr>
+    <tr><th>Perubahan data / API</th><td>Kolom <span class="mono">subscriptions.paused_until</span>, tabel <span class="mono">pause_events</span> · <span class="mono">POST /subscriptions/:id/pause</span>, <span class="mono">/resume</span></td></tr>
+    <tr><th>Keputusan</th><td>Pakai status pause. <b>Ditolak:</b> cancel + re-subscribe otomatis (riwayat & diskon customer hilang).</td></tr>
+    <tr><th>Risiko</th><td>Proration saat pause di tengah periode · scheduler lupa mengecek status → invoice tetap terbit (lihat INC-7: retry &amp; duplikasi)</td></tr>
+    <tr><th>Feature flag</th><td>Ya — <span class="mono">subscription_pause</span> (GrowthBook), dibuka bertahap</td></tr>
+    <tr><th>Estimasi</th><td>${b("M")} · ±6 task</td></tr>
+  </table>
+  <h3 style="margin-top:12px">AC → solusi</h3>
+  <table>${[["AC1", "Endpoint pause + validasi 1–3 bulan"], ["AC2", "Scheduler skip status paused"], ["AC3", "Job harian resume"], ["AC4", "2 email template baru"], ["AC5", "Tabel pause_events → tampil di history"]].map(([a, s]) => `<tr><td class="mono">${a}</td><td>${s}</td></tr>`).join("")}</table>`, isNew);
+
+const discussionCard = (isNew) => card("🗂 Arsip diskusi + crosscheck (diskusinya sendiri tidak terjadi di PMT)", `
+  <div class="small"><b>AR-3</b> 🤖 Meeting summary (AI) — “Subscription pause kickoff” · 6 Nov · diarsipkan oleh ${who("yoga")} <span class="badge">🔒 read-only</span></div>
+  <div class="small"><b>AR-5</b> <span class="muted">(simulasi)</span> 💬 Slack thread #payflow-dev — “scheduler & proration” · link ↗ · diarsipkan oleh ${who("andi")}</div>
+  <div class="small"><b>AR-6</b> <span class="muted">(simulasi)</span> 📝 Meeting notes — “Solution review” · diarsipkan oleh ${who("budi")}</div>
+  <table style="margin-top:8px">
+    <tr><td>${b("✓ covered", "b-pass")}</td><td class="small"><b>DECISION</b> Billing resumes automatically — <span class="muted">AR-3 baris 5</span></td></tr>
+    <tr><td>${b("✓ covered", "b-pass")}</td><td class="small"><b>DECISION</b> Pakai status pause, bukan cancel + re-subscribe — <span class="muted">AR-6 baris 3</span></td></tr>
+    <tr><td>${b("✓ covered", "b-pass")}</td><td class="small"><b>OPEN → dijawab</b> Proration pause di tengah periode → ada di Risiko — <span class="muted">AR-5 · link Slack ↗</span></td></tr>
+  </table>
+  <div class="small" style="margin-top:6px">${b("AI", "b-ai")} Kartu keputusan di-draft dari PRD + arsip → Budi merapikan → review. Crosscheck: 0 konflik, 0 missing.</div>`, isNew);
+
+const TASKS = [
+  ["T-1", "Migration: paused_until + pause_events", "AC5", "andi", "1d", "#432"],
+  ["T-2", "API pause / resume + validasi", "AC1", "andi", "2d", "#433"],
+  ["T-3", "Scheduler skip paused + job resume", "AC2, AC3", "budi", "2d", "#434"],
+  ["T-4", "Email template pause & resume", "AC4", "nadia", "1d", "#435"],
+  ["T-5", "UI pause di halaman subscription + history", "AC1, AC5", "nadia", "2d", "#436"],
+  ["T-6", "Feature flag subscription_pause", "—", "andi", "0.5d", "#437"],
+  ["T-7", "Test plan: proration & scheduler", "AC2, AC3", "tono", "1d", "#438"],
+];
+const breakdownCard = (isNew) => card("🧩 Breakdown — task", `
+  <div class="small">${b("AI", "b-ai")} Draft task dari tabel AC → solusi · ${who("budi")} merapikan &amp; memberi assignee</div>
+  <table style="margin-top:8px"><tr><th>Task</th><th>Untuk</th><th>Assignee</th><th>Est.</th><th>GitHub</th></tr>
+  ${TASKS.map(([id, t, ac, u, e, gh]) => `<tr><td><span class="mono">${id}</span> ${t}</td><td class="mono">${ac}</td><td class="small">${U[u][1]}</td><td>${e}</td><td class="mono">${gh}</td></tr>`).join("")}</table>
+  <h3 style="margin-top:12px">Cakupan AC</h3>
+  <div>${AC.map(([id]) => b(id + " ✓", "b-pass")).join(" ")} <span class="small muted">· migrasi ✓ · flag ✓ (diminta oleh Solution)</span></div>`, isNew);
+
+const devCard = (isNew) => card("🚀 Development — tampilan Dev (Andi)", `
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <h3>Context pack</h3>
+      <div class="small"><b>Kenapa:</b> Kopi Kita (churn risk) ingin pause di low season (REQ-5).</div>
+      <div class="small"><b>Apa:</b> PRD v1 · 5 AC</div>
+      <div class="small"><b>Bagaimana:</b> status pause, scheduler skip, flag <span class="mono">subscription_pause</span></div>
+      <div class="small"><b>Hati-hati:</b> INC-7 (retry → duplikasi) · BR-1 aturan invoice</div>
+    </div>
+    <div>
+      <h3>Task saya</h3>
+      <div class="small">T-1 Migration · T-2 API pause/resume · T-6 Flag</div>
+      <h3 style="margin-top:8px">Branch (diisi manual oleh dev)</h3>
+      <div class="small mono" style="border:1px solid var(--line);border-radius:6px;padding:4px 8px">feature/PAY-23-subscription-pause → main</div>
+    </div>
+  </div>
+  <h3 style="margin-top:12px">Task board</h3>
+  <div class="cols">
+    <div class="col"><h4>To do</h4>${["T-4", "T-5", "T-6", "T-7"].map((t) => `<div class="tk">${t}</div>`).join("")}</div>
+    <div class="col"><h4>In progress</h4><div class="tk"><b>T-1</b> · Andi</div><div class="tk"><b>T-3</b> · Budi</div></div>
+    <div class="col"><h4>In review</h4></div><div class="col"><h4>Done</h4></div>
+  </div>`, isNew);
+
+// ---------- the 5 states ----------
+const STATES = [
+  { title: "Belum ada requirement", sub: "Request diterima, item dibuat", cur: 0,
+    story: `PM (Yoga) men-triage <b>REQ-5</b> lalu klik <i>Create item from this request</i>. Item <b>PAY-23</b> lahir di tahap <b>Requirement</b>, tapi PRD-nya belum ada.`,
+    main: (s) => prdCard(0, true) + requestsCard(true),
+    side: () => card("🚦 Gate Requirement", gate([[false, "PRD ditulis"], [false, "PRD direview & dipublish (min. v1)"]]) + `<p class="small muted">Item tidak bisa maju ke Solution.</p>`) +
+      card("👉 Langkah berikutnya", `<div class="small">${who("yoga")} menulis PRD, lalu <i>Request review</i> ke Hendra (requester) &amp; Dewi.</div>`) },
+  { title: "Requirement lengkap", sub: "PRD v1 dipublish", cur: 0, done: [],
+    story: `Yoga menulis PRD (rich text, tabel AC, 1 desain Figma). <b>Crosscheck</b> dengan arsip kickoff (AR-3) menemukan konflik “max 2 bulan” vs “1–3 bulan” → diselesaikan sebelum review (diputuskan 1–3 bulan, dicatat). Hendra &amp; Dewi approve → <b>Publish v1</b>. Wiki tersinkron, issue GitHub #431 dibuat.`,
+    main: () => prdCard(1, true) + requestsCard(false),
+    side: () => card("🚦 Gate Requirement", gate([[true, "PRD ditulis"], [true, "PRD v1 dipublish (2/2 approve)"]]) + `<button class="btn primary">Advance → Solution</button>`, true) +
+      card("👉 Langkah berikutnya", `<div class="small">${who("budi")} (Lead Dev) memimpin diskusi solusi.</div>`) },
+  { title: "Solution lengkap", sub: "Keputusan teknis tercatat", cur: 1,
+    story: `Tim berdiskusi di <b>meeting &amp; Slack</b> (bukan di PMT). Notulen/ringkasan AI &amp; link Slack <b>diarsipkan</b> (tidak bisa diedit). AI men-draft <b>kartu keputusan</b>; Budi merapikan, <b>crosscheck</b> arsip vs PRD/solution bersih, Budi &amp; Dewi approve. Inilah jawaban “<b>bagaimana</b>” — belum “siapa mengerjakan apa”.`,
+    main: () => solutionCard(true) + discussionCard(true) + prdCard(1, false),
+    side: () => card("🚦 Gate Solution", gate([[true, "Semua AC punya solusi (5/5)"], [true, "Perubahan data/API ditulis"], [true, "Approve Lead Dev"], [true, "Approve Eng Lead (ada perubahan skema)"]]) + `<button class="btn primary">Advance → Breakdown</button>`, true) +
+      card("📌 Yang otomatis dipakai tahap lain", `<div class="small">Breakdown ← tabel AC → solusi &amp; estimasi<br>QA ← risiko (proration, scheduler)<br>Release ← flag <span class="mono">subscription_pause</span><br>AI ← bagian yang disentuh + INC-7</div>`, true) },
+  { title: "Breakdown lengkap", sub: "Task + assignee + issue", cur: 2,
+    story: `AI membuat draft 7 task dari tabel AC → solusi. Budi memberi assignee &amp; estimasi; task otomatis jadi GitHub Issue. Ini jawaban “<b>siapa mengerjakan apa</b>”.`,
+    main: () => breakdownCard(true) + solutionCard(false),
+    side: () => card("🚦 Gate Breakdown", gate([[true, "Setiap AC punya ≥1 task (5/5)"], [true, "Setiap task punya assignee & estimasi"], [true, "Task tersinkron ke GitHub Issue"], [true, "Task migrasi & flag ada (diminta Solution)"]]) + `<button class="btn primary">Advance → Development</button>`, true) +
+      card("📊 Ringkasan", `<div class="small">7 task · ±9.5 hari kerja · 4 orang<br>Proyeksi: dev selesai ±2 minggu</div>`, true) },
+  { title: "Mulai Development", sub: "Dev langsung punya konteks", cur: 3,
+    story: `Sprint 23 ditutup sebelum coding mulai → item <b>di-carry over</b> ke Sprint 24 dengan alasan (“menunggu approval Eng Lead”); riwayatnya tetap terlihat. Item masuk <b>Development</b>. Andi membuka item dan langsung melihat <b>kenapa</b> (request), <b>apa</b> (PRD), <b>bagaimana</b> (solution) dan <b>task-nya</b> — tanpa bertanya ke siapa pun. Task tambahan tetap boleh dibuat kapan saja.`,
+    main: () => devCard(true),
+    side: () => card("🧵 Jejak yang sudah terkumpul", `<div class="small">📥 REQ-5 (Kopi Kita)<br>📝 PRD v1 · 5 AC · 2 approve<br>🧭 Kartu keputusan · 2 approve<br>🧩 7 task · issue #432–#438<br>📄 wiki tersinkron</div>`) +
+      card("🚦 Gate Development", gate([[false, "Semua task dev selesai (0/6)"], [false, "PR terhubung ke item"]]) + `<p class="small muted">Gate berikutnya terisi seiring kerja dev.</p>`, true) },
+];
+
+// Real prototype pages for each step (opened as the right person via ?as=).
+const SEE = [
+  [["/p/p-payflow/request/REQ-5?as=u2", "REQ-5 (Rina, PM)"], ["/p/p-payflow/item/PAY-23?as=u3", "PAY-23 sekarang (Yoga)"], ["/p/p-payflow/requests?as=u2", "Inbox request"]],
+  [["/p/p-payflow/item/PAY-23/prd?as=u3", "PRD PAY-23 + 🔎 crosscheck"], ["/p/p-payflow/item/PAY-12-AM-1/prd?v=draft&as=u4", "Review PRD (Hendra)"], ["/p/p-payflow/item/PAY-12/prd?as=u2", "PRD yang sudah publish (PAY-12)"]],
+  [["/p/p-payflow/item/PAY-21/solution?as=u5", "Kartu Solution (PAY-21)"], ["/p/p-payflow/item/PAY-23/archive?as=u3", "Arsip + context notes"], ["/p/p-payflow/archives?q=30 days&as=u2", "Cari di arsip"]],
+  [["/p/p-payflow/board?as=u5", "Task board"], ["/p/p-payflow/item/PAY-12?as=u5", "Item dengan task & PR (PAY-12)"]],
+  [["/p/p-payflow/item/PAY-20?as=u6", "Tampilan Dev (PAY-20)"], ["/p/p-payflow/sprints?as=u2", "Sprint & carry over"]],
+];
+let i = 0;
+function render() {
+  const s = STATES[i];
+  document.getElementById("steps").innerHTML = STATES.map((x, k) => `<button class="${k === i ? "on" : k < i ? "past" : ""}" onclick="go(${k})"><span class="n">${k + 1}</span><b>${x.title}</b><small>${x.sub}</small></button>`).join("");
+  document.getElementById("view").innerHTML = `
+    <div class="story"><h2>${i + 1}. ${s.title}</h2><div>${s.story}</div></div>
+    <div><b>PAY-23 · Subscription pause</b> ${b("Feature")} ${b("strict gate")} ${b("2026-Q4")} ${b(i < 4 ? "Sprint 23" : "Sprint 24", "b-ai")} ${i === 4 ? b("carried over ×1", "b-warn") : ""} <span class="small muted">· owner ${U.yoga[1]}</span></div>
+    <div class="thread">${STAGES.map((st, k) => `<span class="${k < s.cur ? "done" : k === s.cur ? "cur" : ""}">${k + 1}. ${st}</span>`).join("")}</div>
+    <div class="grid"><div>${s.main()}</div><div>${s.side()}</div></div>
+    <div class="card"><h3>🔗 Coba di prototype</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${(SEE[i] || []).map(([h, l]) => `<a class="btn" href="index.html#${h}">${l}</a>`).join("")}</div></div>
+    <div class="note">Kotak dengan garis kuning = <mark>baru muncul di langkah ini</mark>. Bandingkan dengan langkah sebelumnya untuk melihat apa yang bertambah.</div>`;
+  document.getElementById("pos").textContent = `${i + 1} / ${STATES.length}`;
+  document.getElementById("prev").disabled = i === 0;
+  document.getElementById("next").disabled = i === STATES.length - 1;
+}
+function go(k) { i = Math.max(0, Math.min(STATES.length - 1, k)); render(); window.scrollTo(0, 0); }
+document.getElementById("prev").onclick = () => go(i - 1);
+document.getElementById("next").onclick = () => go(i + 1);
+document.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") go(i + 1); if (e.key === "ArrowLeft") go(i - 1); });
+render();
+</script>
+</body>
+</html>

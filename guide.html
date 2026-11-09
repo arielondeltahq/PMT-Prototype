@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delta PMT — Buku Panduan Pengguna</title>
+  <style>
+    :root { --red: #dc2626; --ink: #1d2330; --muted: #6b7280; --line: #e5e7eb; --soft: #f8fafc; --accent: #4f46e5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: #fff; }
+    a { color: var(--accent); }
+    .wrap { display: grid; grid-template-columns: 260px 1fr; max-width: 1180px; margin: 0 auto; }
+    nav { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 32px 20px; border-right: 1px solid var(--line); font-size: 14px; }
+    nav b { display: block; margin-bottom: 12px; }
+    nav a { display: block; color: var(--ink); text-decoration: none; padding: 4px 0; }
+    nav a:hover { color: var(--accent); }
+    nav .sub { padding-left: 12px; color: var(--muted); }
+    main { padding: 40px 56px 120px; max-width: 860px; }
+    h1 { font-size: 34px; line-height: 1.2; margin: 0 0 8px; }
+    h2 { font-size: 24px; margin: 56px 0 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+    h3 { font-size: 18px; margin: 28px 0 8px; }
+    .lead { font-size: 18px; color: var(--muted); }
+    .box { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+    .box.red { background: #fef2f2; border-color: #fecaca; }
+    .box.tip::before { content: "💡 Tips  "; font-weight: 700; }
+    .box.warn::before { content: "⚠ Penting  "; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 12px 0; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: var(--soft); font-size: 13px; color: var(--muted); }
+    .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: #eef0ff; color: var(--accent); }
+    .tag.later { background: #fef3c7; color: #b45309; }
+    /* The red thread */
+    .thread { position: relative; margin: 28px 0 8px; padding: 0 0 0 36px; }
+    .thread::before { content: ""; position: absolute; left: 13px; top: 6px; bottom: 6px; width: 4px; background: var(--red); border-radius: 2px; }
+    .stop { position: relative; margin-bottom: 18px; }
+    .stop::before { content: attr(data-n); position: absolute; left: -36px; top: 0; width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 3px solid var(--red); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .stop b { font-size: 17px; }
+    .stop .who { font-size: 13px; color: var(--muted); }
+    .stop .out { font-size: 14px; }
+    .hline { display: flex; align-items: center; gap: 0; overflow-x: auto; margin: 20px 0; padding-bottom: 8px; }
+    .hline span { flex-shrink: 0; padding: 6px 10px; border: 2px solid var(--red); border-radius: 6px; font-size: 13px; font-weight: 600; background: #fff; }
+    .hline i { flex-shrink: 0; width: 18px; height: 4px; background: var(--red); }
+    .flow { margin: 20px 0; } .flow svg { width: 100%; height: auto; } .flow figcaption { font-size: 13px; color: var(--muted); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+    .card h4 { margin: 0 0 6px; font-size: 16px; }
+    .card p { margin: 0; font-size: 14px; }
+    .cta { display: inline-block; margin-top: 12px; padding: 10px 18px; background: var(--accent); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; }
+    footer { margin-top: 64px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); } main { padding: 24px; } .grid2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div style="background:#111827;color:#fff;padding:8px 16px;font:13px system-ui;position:sticky;top:0;z-index:10"><a href="index.html#/tour" style="color:#c7d2fe">← Kembali ke prototype (tour)</a> · <a href="flow-demo.html" style="color:#c7d2fe">🎬 Demo alur</a> · <a href="lens-demo.html" style="color:#c7d2fe">🎬 Demo lens</a></div>
+<div class="wrap">
+  <nav>
+    <b>◆ Delta PMT — Panduan</b>
+    <a href="#kenapa">1. Kenapa Delta PMT?</a>
+    <a href="#benang-merah">2. Konsep benang merah</a>
+    <a href="#benang-merah-tahap" class="sub">Tahap-tahapnya</a>
+    <a href="#benang-merah-gerbang" class="sub">Gerbang (gate)</a>
+    <a href="#benang-merah-telusur" class="sub">Menelusur balik</a>
+    <a href="#benang-merah-amandemen" class="sub">Amendment</a>
+    <a href="#mulai">3. Mulai memakai</a>
+    <a href="#role">4. Panduan per role</a>
+    <a href="#fitur">5. Fitur utama</a>
+    <a href="#fitur-item" class="sub">Item & Thread</a>
+    <a href="#fitur-board" class="sub">Task board & otomatisasi</a>
+    <a href="#fitur-knowledge" class="sub">Knowledge Center</a>
+    <a href="#fitur-ai" class="sub">Asisten AI</a>
+    <a href="#fitur-files" class="sub">Files</a>
+    <a href="#fitur-release" class="sub">Release & insiden</a>
+    <a href="#akses">6. Hak akses</a>
+    <a href="#kebiasaan">7. Kebiasaan baik</a>
+    <a href="#potensi">8. Ke depannya</a>
+    <a href="#faq">9. FAQ</a>
+    <a href="#istilah">10. Istilah</a>
+    <p style="margin-top:24px"><a href="index.html">→ Buka prototype</a></p>
+  </nav>
+
+  <main>
+    <h1>Buku Panduan Delta PMT</h1>
+    <p class="lead">Satu aplikasi untuk semua project, semua divisi, dan semua pengetahuan tentang produk kita, dibantu AI.</p>
+    <div class="box">Panduan ini untuk siapa pun yang akan memakai Delta PMT: Business, Project Manager, Engineering Lead, Lead Developer, Developer, Lead QA, QA, maupun divisi lain, baik karyawan tetap maupun intern. Cara kerja aplikasi dijelaskan tanpa istilah teknis. Bagian per role memakai istilah sehari-hari masing-masing role.</div>
+    <div class="box warn">Delta PMT masih dalam tahap <b>prototype</b>. Data di dalamnya adalah contoh, dan jawaban AI masih berupa contoh statis. Fitur bertanda <span class="tag later">rencana</span> belum final.</div>
+
+    <h2 id="kenapa">1. Kenapa Delta PMT?</h2>
+    <p>Selama ini pekerjaan kita tersebar di banyak tempat: task di satu tool, dokumen di tool lain, diskusi di chat, keputusan di kepala orang. Akibatnya:</p>
+    <ul>
+      <li>Saat ada karyawan yang pindah atau keluar, pengetahuannya ikut pergi.</li>
+      <li>PM baru butuh waktu lama untuk memahami konteks produk.</li>
+      <li>QA kesulitan menentukan scope dan edge case karena kurang konteks.</li>
+      <li>Developer sulit menjelaskan perubahan teknis ke tim business.</li>
+      <li>Informasi terlewat dan salah paham terjadi di semua lini.</li>
+    </ul>
+    <p><b>Delta PMT menyatukan semuanya di satu tempat.</b> Setiap pekerjaan, keputusan, dokumen, dan hasil test tercatat dan saling terhubung. Hasilnya, siapa pun bisa menemukan jawaban dan memahami konteks tanpa harus bertanya ke orang yang mungkin sudah tidak ada.</p>
+    <div class="box tip">Delta PMT menggantikan Jira, Monday.com, dan GitHub Projects untuk urusan perencanaan dan pemantauan. GitHub tetap dipakai developer untuk kode (Issues, PR, Actions, Wiki), dan semuanya terhubung otomatis ke Delta PMT.</div>
+
+    <h2 id="benang-merah">2. Konsep benang merah</h2>
+    <p>Ini konsep terpenting di Delta PMT. Bayangkan setiap pekerjaan sebagai <b>satu garis merah panjang</b> yang tidak terputus, dari saat ide atau kebutuhan pertama kali muncul sampai fiturnya dipakai pelanggan dan kita belajar darinya.</p>
+
+    <div class="hline">
+      <span style="opacity:.6">Request (intake)</span><i></i><span>Requirement</span><i></i><span>Solution</span><i></i><span>Breakdown</span><i></i><span>Development</span><i></i><span>Review</span><i></i><span>QA</span><i></i><span>Release</span><i></i><span>Production</span><i></i><span>Learning</span>
+    </div>
+    <p>Satu garis merah = <b>satu item</b>. Dalam satu project, banyak item berjalan bersamaan dengan garisnya masing-masing. Di tahap <b>Release</b>, beberapa garis <b>bertemu dalam satu rilis</b> (misalnya v3.8.0), lalu berpisah lagi karena setiap item dipantau dan dipelajari sendiri-sendiri.</p>
+    <figure class="flow">
+      <svg viewBox="0 0 860 300" role="img" aria-label="Tiga item berjalan masing-masing, bertemu di satu rilis, lalu berpisah lagi">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker></defs>
+        <g font-size="12" fill="#6b7280" text-anchor="middle">
+          <text x="70" y="20">Request → Requirement</text><text x="250" y="20">Solution → Dev → Review</text><text x="420" y="20">QA</text>
+          <text x="560" y="20" font-weight="700" fill="#1d2330">Release</text><text x="720" y="20">Production · Launch</text><text x="820" y="20">Learning</text>
+        </g>
+        <g stroke="#dc2626" stroke-width="4" fill="none" stroke-linecap="round">
+          <path d="M20,70 H460 C500,70 500,150 530,150"/><path d="M20,150 H530"/><path d="M20,230 H460 C500,230 500,150 530,150"/>
+          <path d="M600,150 C630,150 630,70 660,70 H800" marker-end="url(#ar)"/><path d="M600,150 H800" marker-end="url(#ar)"/><path d="M600,150 C630,150 630,230 660,230 H800" marker-end="url(#ar)"/>
+        </g>
+        <g font-size="13" font-weight="600" fill="#1d2330"><text x="24" y="60">PAY-12 · Partial refund (feature)</text><text x="24" y="140">PAY-20 · PDF lebih cepat (enhancement)</text><text x="24" y="220">PAY-25 · Fix pembulatan (bug fix)</text></g>
+        <g fill="#fff" stroke="#dc2626" stroke-width="3"><circle cx="420" cy="70" r="7"/><circle cx="420" cy="150" r="7"/><circle cx="420" cy="230" r="7"/></g>
+        <rect x="525" y="110" width="80" height="80" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="3"/>
+        <text x="565" y="145" font-size="13" font-weight="700" text-anchor="middle" fill="#991b1b">v3.8.0</text><text x="565" y="163" font-size="11" text-anchor="middle" fill="#991b1b">3 item</text>
+        <g font-size="11" fill="#1d2330"><text x="664" y="62">🚩 flag OFF → launch 20 Nov</text><text x="664" y="142">live saat rilis</text><text x="664" y="222">live saat rilis</text></g>
+      </svg>
+      <figcaption>Setiap item punya garisnya sendiri. Beberapa garis bertemu di satu rilis, lalu berpisah lagi. Fitur di balik feature flag bisa <i>dirilis</i> (kodenya ikut v3.8.0) tapi baru <i>diluncurkan</i> ke pengguna di tanggal lain.</figcaption>
+    </figure>
+
+    <p>Pekerjaan itu kita sebut <b>Item</b>, dan garis perjalanannya kita sebut <b>Thread</b>. Tipe item antara lain:</p>
+    <table>
+      <tr><th>Tipe</th><th>Contoh</th><th>Catatan</th></tr>
+      <tr><td>Feature</td><td>"Pelanggan bisa partial refund"</td><td>Melewati semua tahap</td></tr>
+      <tr><td>Enhancement</td><td>"PDF invoice lebih cepat"</td><td>Melewati semua tahap</td></tr>
+      <tr><td>Bug fix</td><td>"Checkout error saat kupon kedaluwarsa"</td><td>Tanpa tahap Solution & Breakdown</td></tr>
+      <tr><td>Hotfix</td><td>"Tagihan ganda, perbaiki sekarang"</td><td>Jalur cepat, langsung ke Development</td></tr>
+      <tr><td>Tech debt</td><td>"Pindahkan render PDF ke antrean"</td><td>Fokus teknis</td></tr>
+      <tr><td>Research</td><td>"Evaluasi payment provider kedua"</td><td>Berakhir di Learning, tanpa rilis</td></tr>
+    </table>
+    <p class="small">Daftar tipe dan tahapnya bisa diatur oleh admin di Backoffice.</p>
+
+    <h3 id="benang-merah-tahap">Tahap-tahapnya</h3>
+    <div class="thread">
+      <div class="stop" data-n="0"><b>Request (intake, sebelum thread)</b> <span class="who">· Business / PM / Dev / QA</span><div class="out">Diajukan lewat form (📥 Requests), lalu ditriage PM. Satu request bisa butuh beberapa item, dan beberapa request bisa diselesaikan satu item. Thread item dimulai dari Requirement.</div></div>
+      <div class="stop" data-n="1"><b>Requirement / PRD</b> <span class="who">· PM, di-review Business</span><div class="out">PRD ditulis langsung di Delta PMT (tabel, Figma, komentar), di-review, lalu dipublish sebagai versi. Berisi <i>acceptance criteria</i> (kriteria "selesai") yang jelas.</div></div>
+      <div class="stop" data-n="2"><b>Solution design</b> <span class="who">· Lead Developer</span><div class="out">Kartu keputusan: pendekatan teknis, perubahan data/API, keputusan beserta <b>alasannya</b>, dan risiko. Diskusinya terjadi di meeting/Slack; notulennya diarsipkan lalu di-<i>crosscheck</i> AI terhadap PRD.</div></div>
+      <div class="stop" data-n="3"><b>Breakdown</b> <span class="who">· Lead Developer</span><div class="out">Pekerjaan dipecah menjadi task (otomatis menjadi GitHub Issue).</div></div>
+      <div class="stop" data-n="4"><b>Development</b> <span class="who">· Developer</span><div class="out">Kode ditulis; Pull Request (PR) otomatis terhubung ke item.</div></div>
+      <div class="stop" data-n="5"><b>Review</b> <span class="who">· Lead Developer</span><div class="out">PR direview, dan dicek: apakah sesuai dengan acceptance criteria?</div></div>
+      <div class="stop" data-n="6"><b>QA</b> <span class="who">· Lead QA / QA</span><div class="out">Pengujian. Test yang <i>blocked</i>, <i>skipped</i>, atau belum dijalankan <b>tidak pernah dianggap lulus</b>.</div></div>
+      <div class="stop" data-n="7"><b>Release</b> <span class="who">· Engineering Lead</span><div class="out">Kode masuk ke <b>satu rilis bersama item lain</b> (misalnya v3.8.0) lewat PR dari <i>release base branch</i> ke <i>target branch</i> (default: branch production project). Kalau ada item di rilis itu yang di-rewind, PR rilis ditahan otomatis.</div></div>
+      <div class="stop" data-n="8"><b>Production · Launch</b> <span class="who">· Engineering Lead / PM</span><div class="out">Dipantau setelah rilis. Fitur di balik <b>feature flag</b> (GrowthBook) bisa sudah dirilis tapi baru <b>diluncurkan</b> (flag dibuka) di rilis atau tanggal lain. Kedua tanggal itu tercatat terpisah.</div></div>
+      <div class="stop" data-n="9"><b>Learning</b> <span class="who">· PM</span><div class="out">Pelajaran dicatat dan pengetahuan diperbarui untuk pekerjaan berikutnya.</div></div>
+    </div>
+    <p>Setiap tahap <b>meninggalkan jejak</b>: siapa yang mengerjakan, kapan, ringkasannya, file atau link terkait, persetujuan, dan keputusan yang diambil. Jejak inilah yang menjadi pengetahuan bersama.</p>
+    <div class="box red"><b>Knowledge gap.</b> Kalau sebuah tahap sudah dilewati tapi tidak ada catatannya, Delta PMT menandainya dengan warna merah sebagai <i>knowledge gap</i>. Artinya, ada bagian cerita yang hilang. AI bisa membantu membuat draf catatannya untuk kamu periksa.</div>
+
+    <h3 id="benang-merah-gerbang">Gerbang (gate)</h3>
+    <p>Di antara tahap ada <b>gerbang</b>, yaitu syarat yang harus dipenuhi sebelum lanjut. Contohnya: PRD harus disetujui, atau semua test kritis harus lulus. Saat membuat item, kamu memilih mode gerbangnya:</p>
+    <table>
+      <tr><th>Mode</th><th>Artinya</th><th>Cocok untuk</th></tr>
+      <tr><td><b>Strict</b></td><td>Item tidak bisa lanjut sebelum syarat terpenuhi. Hanya role tertentu yang bisa melewatinya (<i>override</i>), dan itu tercatat.</td><td>Feature, hal yang menyangkut uang atau data sensitif</td></tr>
+      <tr><td><b>Advisory</b></td><td>Hanya peringatan. Kamu tetap bisa lanjut, tapi tercatat bahwa syarat belum terpenuhi.</td><td>Hotfix, riset, tech debt</td></tr>
+    </table>
+
+    <h3 id="benang-merah-telusur">Menelusur balik (backtracking)</h3>
+    <p>Karena semua tahap terhubung, kamu bisa menelusuri garis merah <b>ke dua arah</b>:</p>
+    <ul>
+      <li><b>Mundur dari masalah:</b> ada insiden di production → rilis mana → item apa → PR mana → apakah test-nya benar-benar dijalankan → requirement dan keputusan apa yang mendasarinya.</li>
+      <li><b>Maju dari requirement:</b> requirement ini sudah diimplementasikan di PR mana, dites oleh apa, dan sudah rilis di versi berapa.</li>
+    </ul>
+    <div class="box">
+      <b>Contoh nyata (ilustrasi):</b> sebuah bug di checkout (Bug A) membuat flow pembayaran tidak bisa dites selama 2 minggu. Test pembayaran berstatus <i>blocked</i>, tapi tidak ada yang sadar. Setelah Bug A diperbaiki, muncul Bug B yang selama ini tersembunyi dan menyebabkan tagihan ganda.<br><br>
+      Dengan benang merah, kita bisa melihat persis titik putusnya: <b>tahap QA lolos padahal test pembayaran tidak pernah dijalankan</b>. Pelajarannya langsung masuk ke aturan bisnis dan gerbang QA, sehingga lain kali sistem akan menghentikannya.
+    </div>
+
+    <h3 id="benang-merah-amandemen">Saat scope berubah: amendment</h3>
+    <p>Kadang PRD berubah setelah item disahkan, misalnya ada fitur tambahan. Di Delta PMT perubahan seperti ini disebut <b>amendment</b>, dan riwayat serta perbedaannya selalu tercatat. Ada dua cara menjalankannya, dipilih oleh PM dan Lead Dev:</p>
+    <table>
+      <tr><th></th><th>Versi baru (paralel)</th><th>Revisi (mundur seperlunya)</th></tr>
+      <tr><td><b>Kapan</b></td><td>Scope lama sudah siap dan harus rilis dulu, atau item sudah rilis</td><td>Perubahan kecil dan masih sejalan, belum rilis</td></tr>
+      <tr><td><b>Yang terjadi</b></td><td>Versi 1 jalan terus sampai rilis; versi 2 mulai lagi dari Requirement</td><td>Item mundur ke Requirement, lalu maju lagi hanya untuk bagian yang berubah. Branch sama, satu rilis</td></tr>
+      <tr><td><b>Cara melihat</b></td><td>Pilih versi di atas thread; tombol <b>Compare</b> menunjukkan perbedaan antar versi</td><td>Tidak perlu memilih apa pun. Pekerjaan lama tetap tampil (ditandai <i>rev 1</i>). Nyalakan <b>"Only changes"</b> untuk melihat persis di mana saja perubahannya</td></tr>
+    </table>
+    <p>Sebelum dikonfirmasi, sistem menampilkan dampaknya: tahap yang diulang, persetujuan yang harus diberikan ulang, task dan test baru, serta efeknya ke jadwal rilis.</p>
+
+    <h2 id="mulai">3. Mulai memakai</h2>
+    <ol>
+      <li><b>Masuk</b> dan buka <b>My home</b>. Kamu akan melihat semua project tempat kamu menjadi anggota.</li>
+      <li><b>Pilih project</b> di sidebar, lalu buka <b>My view</b>. Isinya disesuaikan dengan role kamu.</li>
+      <li>Kalau kamu <b>baru bergabung</b>, di My view akan ada kartu <b>briefing</b> dari AI berisi daftar bacaan wajib tentang produk tersebut. Mulai dari situ.</li>
+      <li>Punya pertanyaan? Ketik di kotak <b>Ask AI</b>. Jawabannya selalu menyertakan sumber.</li>
+    </ol>
+    <a class="cta" href="index.html">Coba prototype →</a>
+    <div class="box tip">Di prototype, kamu bisa berganti peran lewat menu <b>"View as"</b> di kanan atas, untuk melihat tampilan dari sudut pandang role lain.</div>
+
+    <h2 id="role">4. Panduan per role</h2>
+    <p>Semua role bekerja di atas thread dan knowledge yang <b>sama</b>. Yang berbeda adalah tampilan <b>My view</b>, aksi yang tersedia, dan bantuan AI-nya. Bagian ini ditulis dengan istilah sehari-hari masing-masing role.</p>
+
+    <h3>💼 Business (sales, CS, finance, operasional)</h3>
+    <table>
+      <tr><th>Pekerjaan kamu</th><th>Di Delta PMT</th></tr>
+      <tr><td>Meneruskan kebutuhan pelanggan atau pain point dari tiket support</td><td><b>Submit request</b>: tulis problem statement, siapa yang terdampak, dan dampaknya (misalnya "≈12 tiket/bulan", "risiko churn akun enterprise"). Lampirkan bukti seperti rekap tiket atau data revenue. AI akan menunjukkan request serupa yang sudah ada.</td></tr>
+      <tr><td>Sign-off scope</td><td><b>Approve PRD</b> di tahap Requirement. Periksa acceptance criteria dari sisi bisnis: aturan harga, pembulatan, SLA, kebijakan refund. Item dengan gerbang strict tidak bisa lanjut tanpa persetujuanmu.</td></tr>
+      <tr><td>Menjawab pertanyaan klien "kapan rilis?"</td><td><b>Release projection</b>: tanggal target vs proyeksi, tingkat keyakinan, dan alasan dalam bahasa bisnis. Tidak perlu lagi bertanya ke PM atau dev.</td></tr>
+      <tr><td>Memahami cara kerja fitur untuk demo atau komplain</td><td><b>Ask AI</b>: "Bagaimana aturan partial refund?" Jawabannya menyertakan sumber dari aturan bisnis dan PRD.</td></tr>
+    </table>
+
+    <h3>📋 Project Manager / Product</h3>
+    <table>
+      <tr><th>Pekerjaan kamu</th><th>Di Delta PMT</th></tr>
+      <tr><td>Membuat project baru</td><td><b>+ New project</b>: kamu otomatis menjadi project lead. Di <b>Project settings</b> kamu mengatur anggota, project relasi, production branch, kebijakan file, dan <b>format kode item</b>, misalnya <code>{KEY}-{TYPE}-{SEQ:3}</code> → <code>SHP-BUG-007</code>, atau memakai field kustom seperti modul. Preview langsung muncul saat diedit, dan format baru hanya berlaku untuk item baru.</td></tr>
+      <tr><td>Intake dan triage request, menentukan prioritas</td><td><b>Pipeline</b> per tahap. Request yang masuk tampil di inbox <b>📥 Requests</b>; link ke item yang ada atau buat item baru. Tentukan tipe item (feature/enhancement/bug fix…) dan mode gerbangnya.</td></tr>
+      <tr><td>Menulis PRD dan acceptance criteria</td><td>PRD ditulis sebagai halaman wiki dan ditautkan ke tahap Requirement. Tulis AC yang <b>bisa diverifikasi</b>, karena setiap AC nantinya dilacak statusnya (met / partial / unverified) dengan bukti PR dan test. AI menandai AC yang kurang, misalnya edge case pembatalan, proration, atau rollback.</td></tr>
+      <tr><td>Mengelola stakeholder approval</td><td>Approval tercatat per orang dan per tanggal. Yang belum approve tampil sebagai "waiting".</td></tr>
+      <tr><td>Scope dan release planning</td><td>Item ditautkan ke release. Proyeksi rilis otomatis mundur bila ada item yang terhambat gerbang, beserta alasannya.</td></tr>
+      <tr><td>Onboarding PM baru atau handover produk</td><td>PM baru mendapat <b>briefing AI</b> dan urutan bacaan: product overview, aturan bisnis, glosarium, postmortem. Knowledge gap dan halaman usang terlihat di My view, sehingga kamu tahu dokumentasi mana yang perlu diperbarui.</td></tr>
+      <tr><td>Retro dan learning</td><td>Tahap <b>Learning</b> menutup thread. Pelajaran dan postmortem masuk ke Knowledge Center dan muncul kembali di item serupa.</td></tr>
+    </table>
+
+    <h3>🧭 Engineering Lead</h3>
+    <table>
+      <tr><th>Pekerjaan kamu</th><th>Di Delta PMT</th></tr>
+      <tr><td>Memantau flow dan bottleneck delivery</td><td><b>Stage aging</b>: berapa hari item tidak bergerak di tahapnya, dan item yang terhambat strict gate beserta alasannya.</td></tr>
+      <tr><td>Governance kualitas</td><td>Riwayat <b>gate override</b>: siapa yang melewati gerbang, di tahap mana, dan kapan. Mendefinisikan gerbang per tahap dan tipe item (di Backoffice).</td></tr>
+      <tr><td>Release sign-off dan risiko</td><td>Release risk: slip target vs proyeksi, item dengan test kritis yang belum PASS, insiden terbuka.</td></tr>
+      <tr><td>Incident management dan postmortem</td><td>Halaman insiden menelusuri balik release → item → tahap → PR → test → aturan bisnis. Fakta, hipotesis, dan root cause terkonfirmasi dipisah. Action item pencegahan menjadi item baru (tech debt/hotfix) yang terlacak.</td></tr>
+      <tr><td>Mengatur tim, role, dan proses</td><td>Backoffice: role & permission, tipe item & tahapan, automation rules, kebijakan file per project.</td></tr>
+    </table>
+
+    <h3>🛠 Lead Developer / Tech Lead</h3>
+    <table>
+      <tr><th>Pekerjaan kamu</th><th>Di Delta PMT</th></tr>
+      <tr><td>Solution design / tech spec</td><td>Tahap <b>Solution</b>: catat pendekatan, trade-off, dan <b>keputusan beserta alasannya</b> (format mirip ADR). Keputusan otomatis masuk ke Knowledge Center → "Decisions from threads". Approve solution sebelum breakdown (strict gate).</td></tr>
+      <tr><td>Breakdown dan estimasi</td><td>Tahap <b>Breakdown</b>: pecah item menjadi task. Task tersinkron dua arah ke GitHub Issues di repo yang tepat (satu item bisa lintas repo: api, web, e2e). Gerbangnya: setiap AC punya task.</td></tr>
+      <tr><td>Code review</td><td>Tahap <b>Review</b>: daftar PR terbuka per item, dengan <b>requirement conformance</b>, yaitu AC mana yang sudah punya bukti di PR atau test. AI menunjukkan modul bersama yang tersentuh (misalnya ledger writer dipakai oleh refund dan payment) serta insiden lama di area yang sama.</td></tr>
+      <tr><td>Menjaga dokumentasi arsitektur</td><td>Halaman arsitektur di GitHub Wiki ditandai <i>possibly outdated</i> bila lama tidak diperbarui. Tahap Solution yang terlewat tanpa catatan ditandai knowledge gap.</td></tr>
+    </table>
+
+    <h3>💻 Developer</h3>
+    <table>
+      <tr><th>Pekerjaan kamu</th><th>Di Delta PMT</th></tr>
+      <tr><td>Mengambil task dan memahami konteksnya</td><td><b>My tasks</b> + <b>context pack</b> per item: kenapa item ini ada (request asli), aturan bisnis yang wajib dipatuhi (misalnya idempotency, pembulatan rupiah, isolasi tenant), keputusan desain, dan insiden lama di area yang sama.</td></tr>
+      <tr><td>Branch, commit, PR</td><td>Sebut kode item di nama branch atau judul PR (misalnya <code>feat/PAY-12-partial-refund</code>) dan <code>closes #412</code> di deskripsi. PR otomatis menempel ke thread, dan status task otomatis berpindah: PR dibuka → <i>In review</i>, PR dev di-merge → <i>Done</i>, PR yang memperbaiki QA finding di-merge → <i>Ready to QA</i>.</td></tr>
+      <tr><td>Memperbaiki temuan QA</td><td>QA finding masuk sebagai task berstatus <i>Fixing</i> dan di-assign ke kamu. Tidak perlu menggeser kartu manual setelah merge.</td></tr>
+      <tr><td>Menjelaskan perubahan ke business</td><td>"Explain my change for Business": AI merangkum PR dalam bahasa non-teknis (apa yang berubah bagi pengguna, risiko, yang belum termasuk).</td></tr>
+      <tr><td>Mendokumentasikan keputusan teknis kecil</td><td>Tulis di catatan tahap Development, cukup satu-dua kalimat <i>kenapa</i>. Itu sudah menjadi knowledge bagi developer berikutnya.</td></tr>
+    </table>
+
+    <h3>🔎 Lead QA</h3>
+    <table>
+      <tr><th>Pekerjaan kamu</th><th>Di Delta PMT</th></tr>
+      <tr><td>Test strategy dan test plan</td><td>Test plan disusun dari acceptance criteria item, lalu di-<b>approve</b> sebelum eksekusi. Tandai test case <b>critical</b> untuk flow yang menyangkut uang, data, atau keamanan.</td></tr>
+      <tr><td>Exit criteria QA</td><td>Gerbang tahap QA bersifat deterministik: semua test critical harus <b>PASS</b>. Status <code>BLOCKED</code>, <code>SKIPPED</code>, dan <code>NOT EXECUTED</code> dihitung sebagai <b>belum tervalidasi</b>, bukan lulus. QA finding yang masih terbuka juga menahan gerbang.</td></tr>
+      <tr><td>Dependency antar test</td><td>Bila prerequisite gagal (misalnya sandbox payment down), test turunannya tampil sebagai BLOCKED dengan alasannya. Dengan begitu, "suite hijau" tidak menyembunyikan flow yang sebenarnya belum pernah dijalankan.</td></tr>
+      <tr><td>Regression scope</td><td>Saat ada insiden, regression test dan aturan bisnis baru tercatat sebagai pencegahan, lalu muncul otomatis di item lain yang menyentuh area yang sama.</td></tr>
+    </table>
+
+    <h3>🧪 QA</h3>
+    <table>
+      <tr><th>Pekerjaan kamu</th><th>Di Delta PMT</th></tr>
+      <tr><td>Memahami scope sebelum testing</td><td>Thread item memuat PRD, AC, keputusan desain, dan file desain. AI menyarankan <b>edge case</b> berdasarkan aturan bisnis dan insiden historis: boundary value, retry/idempotency, concurrency, timezone, pembulatan, akses lintas tenant, perubahan state.</td></tr>
+      <tr><td>Melaporkan bug</td><td><b>Report a QA finding</b>: otomatis menjadi task <i>Fixing</i> + GitHub Issue, terhubung ke item dan AC terkait. Sertakan langkah reproduksi, expected vs actual, environment, dan bukti (screenshot).</td></tr>
+      <tr><td>Retest</td><td>Begitu PR perbaikan di-merge, task otomatis pindah ke <i>Ready to QA</i> dan kamu mendapat notifikasi. Jika retest gagal, tandai gagal dan task kembali ke <i>Fixing</i> untuk developer yang sama.</td></tr>
+      <tr><td>Mencatat hasil eksekusi</td><td>Bedakan dengan jujur: PASS, FAIL, BLOCKED (beserta prerequisite-nya), SKIPPED (beserta alasannya), dan NOT EXECUTED. Status inilah yang dibaca gerbang QA dan proyeksi rilis.</td></tr>
+    </table>
+
+    <h3>🎓 Intern (di role apa pun)</h3>
+    <p>Kamu bekerja sesuai role-mu (Developer, QA, dll.). Beberapa aksi dikunci: approval (PRD, solution, PR review, test plan), override gerbang, kelola release, dan halaman sensitif. Arahkan kursor ke tombol 🔒 untuk melihat alasannya. Mentor tercantum di My view. Briefing AI membantu kamu memahami produk di minggu-minggu pertama.</p>
+
+    <h2 id="fitur">5. Fitur utama</h2>
+
+    <h3 id="fitur-item">🧵 Item & Thread</h3>
+    <p><b>Dasar:</b> buat item atau ajukan request, lalu ikuti perjalanannya tahap demi tahap. Halaman thread menampilkan semua tahap, gerbang, persetujuan, task, PR, test, file, dan rilis dalam satu layar.</p>
+    <p><b>Kesesuaian dengan requirement:</b> setiap acceptance criterion punya status <i>met</i>, <i>partial</i>, atau <i>unverified</i>, lengkap dengan buktinya (PR atau test). Jadi "sudah selesai" bukan lagi soal perasaan.</p>
+    <p><b>Potensi:</b> AI menyarankan item serupa saat kamu membuat item baru (mencegah duplikasi), dan membuat draf catatan untuk tahap yang kosong.</p>
+
+    <h3 id="fitur-board">▦ Task board & otomatisasi</h3>
+    <p><b>Dasar:</b> board kanban untuk task (To do → In progress → In review → Fixing → Ready to QA → Testing → Done). Task terhubung dua arah dengan GitHub Issue.</p>
+    <p><b>Otomatisasi:</b> kamu tidak perlu lagi menggeser kartu secara manual. Contoh aturan:</p>
+    <ul>
+      <li>PR yang menutup issue temuan QA di-merge → task otomatis pindah dari <b>Fixing</b> ke <b>Ready to QA</b>, dan QA pelapor diberi notifikasi.</li>
+      <li>PR dibuka → task pindah ke <b>In review</b>.</li>
+      <li>QA menyatakan retest gagal → task kembali ke <b>Fixing</b>.</li>
+    </ul>
+    <p>Setiap perpindahan otomatis tercatat di <b>automation log</b>. Aturannya bisa dinyalakan, dimatikan, atau ditambah oleh admin.</p>
+    <div class="box tip">Agar otomatisasi berjalan, tulis <code>closes #nomor-issue</code> di deskripsi PR kamu.</div>
+
+    <h3 id="fitur-knowledge">📚 Knowledge Center</h3>
+    <p><b>Dasar:</b> semua pengetahuan produk di satu tempat: gambaran produk, aturan bisnis, glosarium, PRD, keputusan, arsitektur, runbook, dan postmortem. Sumber utamanya GitHub Wiki, ditambah keputusan yang otomatis terkumpul dari thread.</p>
+    <p><b>Kenapa penting:</b> pengetahuan terkumpul <b>sebagai efek samping dari bekerja</b>. Kamu tidak perlu menulis dokumentasi terpisah, karena setiap catatan tahap, keputusan, dan postmortem langsung menjadi bagian dari knowledge.</p>
+    <p><b>Potensi:</b> halaman yang lama tidak diperbarui padahal area terkait sering berubah akan ditandai <i>mungkin usang</i>, dan AI bisa mengusulkan pembaruannya.</p>
+
+    <h3 id="fitur-ai">🤖 Asisten AI</h3>
+    <p>AI di Delta PMT adalah <b>asisten, bukan pengambil keputusan</b>.</p>
+    <ul>
+      <li>Setiap jawaban <b>menyertakan sumber</b> yang bisa kamu klik dan periksa.</li>
+      <li>AI membedakan <b>fakta</b> (dari sistem), <b>dugaan</b> (perlu dikonfirmasi), dan <b>yang sudah dikonfirmasi</b> manusia.</li>
+      <li>Saran AI bisa kamu terima, koreksi, atau tolak.</li>
+      <li>AI hanya menjawab dari sumber yang boleh kamu akses.</li>
+    </ul>
+    <p>Contoh pertanyaan: "Apa itu PayFlow?", "Kapan rilis berikutnya?", "Edge case apa yang perlu dites untuk refund?", "Kenapa dulu ada insiden tagihan ganda?"</p>
+
+    <h3 id="fitur-files">🗂 Files</h3>
+    <p><b>Dasar:</b> semua file dan link (upload, Google Drive, Figma, link web) tersimpan di satu explorer, dan bisa ditempel ke banyak tempat sekaligus: item, tahap, task, insiden, atau halaman wiki. Kamu selalu bisa melihat di mana saja sebuah file dipakai.</p>
+    <p><b>Akses:</b> semua orang bisa melihat nama dan link file. Isinya baru bisa dibuka kalau kamu punya akses. Secara default, akses mengikuti project (termasuk project yang terdaftar sebagai relasi), dan pemilik file bisa mengubahnya seperti di Google Drive. Akses di penyedia eksternal (misalnya Google Drive) juga tetap berlaku.</p>
+    <p><b>Agar terbaca AI:</b> file yang menjadi sumber pengetahuan harus bisa dibaca AI. Kalau tidak (misalnya desain Figma atau video), kamu akan diminta mengunggah versi yang bisa dibaca, seperti ekspor PDF atau transkrip.</p>
+    <div class="box warn">Usahakan menulis langsung di Delta PMT, bukan melampirkan file Word, Excel, atau PDF. Konten di dalam app selalu terhubung, bisa dicari, dan terbaca AI. Lampiran eksternal sebaiknya hanya untuk hal yang belum bisa dibuat di app (misalnya diagram yang kompleks). Setiap project bisa punya kebijakan file sendiri.</div>
+
+    <h3 id="fitur-release">🚀 Release & 🔥 Insiden</h3>
+    <p><b>Release:</b> setiap versi punya tanggal target dan <b>proyeksi</b> beserta alasannya. Contoh: "mundur 5 hari karena 2 skenario kritis belum teruji." Tim business bisa memantaunya tanpa perlu bertanya.</p>
+    <p><b>Insiden:</b> halaman insiden menampilkan penelusuran balik di sepanjang benang merah, memisahkan fakta, dugaan, dan yang sudah dikonfirmasi, serta daftar langkah pencegahan yang kembali masuk ke knowledge. Item berikutnya yang menyentuh area yang sama akan otomatis diingatkan tentang insiden ini.</p>
+
+    <h2 id="akses">6. Hak akses</h2>
+    <ul>
+      <li>Setiap orang bisa punya <b>lebih dari satu role</b>, misalnya Engineering Lead sekaligus Admin.</li>
+      <li>Hak akses = gabungan hak dari semua role kamu, <b>dikurangi</b> pembatasan dari tipe karyawan (misalnya intern).</li>
+      <li>Kalau sebuah tombol terkunci 🔒, arahkan kursor ke tombol itu untuk melihat alasannya.</li>
+      <li>Role, hak akses, tipe item, tahap, dan aturan otomatisasi diatur oleh admin di <b>Backoffice</b>.</li>
+    </ul>
+
+    <h2 id="kebiasaan">7. Kebiasaan baik</h2>
+    <table>
+      <tr><th>Lakukan</th><th>Kenapa</th></tr>
+      <tr><td>Tulis <b>alasan</b>, bukan hanya apa yang dikerjakan</td><td>Orang berikutnya butuh tahu <i>kenapa</i></td></tr>
+      <tr><td>Selalu sebut kode item (misalnya <code>PAY-12</code>) di branch/PR</td><td>PR otomatis terhubung ke thread</td></tr>
+      <tr><td>Pakai <code>closes #issue</code> di PR</td><td>Task berpindah otomatis</td></tr>
+      <tr><td>Jangan biarkan test <i>blocked</i>/<i>skipped</i> tanpa catatan</td><td>Belum dites ≠ lulus</td></tr>
+      <tr><td>Tutup knowledge gap yang ditandai merah</td><td>Agar ceritanya utuh</td></tr>
+      <tr><td>Tanya AI dulu sebelum bertanya ke orang</td><td>Jawabannya sudah ada, lengkap dengan sumber</td></tr>
+      <tr><td>Tulis langsung di app, hindari lampiran dokumen</td><td>Satu sumber kebenaran</td></tr>
+    </table>
+
+    <h2 id="potensi">8. Ke depannya</h2>
+    <p>Hal-hal yang sedang dipertimbangkan. Mana yang akan dibangun ditentukan oleh perusahaan setelah MVP.</p>
+    <ul>
+      <li><span class="tag later">rencana</span> Rich text dengan gambar dan flowchart langsung di dalam app</li>
+      <li><span class="tag later">rencana</span> AI yang benar-benar membaca seluruh knowledge (saat ini masih contoh)</li>
+      <li><span class="tag later">rencana</span> Analisis dampak PR otomatis dan peringatan risiko sebelum rilis</li>
+      <li><span class="tag later">rencana</span> Pengaturan berbagi knowledge per project (sekarang semua dibagikan)</li>
+      <li><span class="tag later">rencana</span> Impor dari GitHub Projects dan sumber knowledge lain</li>
+    </ul>
+
+    <h2 id="faq">9. FAQ</h2>
+    <h3>Apakah saya masih perlu membuka GitHub?</h3>
+    <p>Developer tetap bekerja di GitHub untuk kode. Untuk melihat status, task, dan konteks, cukup buka Delta PMT. Issue dan PR tersinkron otomatis.</p>
+    <h3>Apakah AI bisa mengubah atau memutuskan sesuatu sendiri?</h3>
+    <p>Tidak. AI hanya memberi saran dan ringkasan. Persetujuan, perpindahan tahap, dan keputusan tetap dilakukan manusia. Otomatisasi hanya menggeser task berdasarkan aturan yang jelas dan tercatat.</p>
+    <h3>Kenapa saya tidak bisa membuka sebuah file?</h3>
+    <p>Bisa karena pemilik file membatasinya, karena kamu bukan anggota project tersebut, atau karena penyedia eksternal (misalnya Google Drive) menolak akunmu. Halaman file menjelaskan penyebabnya, dan kamu bisa menekan tombol <i>Request access</i>.</p>
+    <h3>Saya intern. Apa yang berbeda?</h3>
+    <p>Kamu bisa melakukan hampir semua pekerjaan sesuai role-mu, kecuali persetujuan, override gerbang, dan membuka halaman sensitif. Mentor kamu tercantum di My view.</p>
+    <h3>Bagaimana kalau ada tahap yang tidak relevan untuk pekerjaan saya?</h3>
+    <p>Setiap tipe item punya tahapannya sendiri. Contohnya, hotfix tidak melewati tahap Solution. Kalau ada yang kurang pas, sampaikan ke admin agar diatur di Backoffice.</p>
+
+    <h2 id="istilah">10. Istilah</h2>
+    <table>
+      <tr><td><b>Item</b></td><td>Satu unit pekerjaan: fitur, bug fix, hotfix, dll.</td></tr>
+      <tr><td><b>Thread</b></td><td>Benang merah perjalanan satu item dari request sampai learning</td></tr>
+      <tr><td><b>Tahap (stage)</b></td><td>Satu titik di sepanjang thread, misalnya QA</td></tr>
+      <tr><td><b>Gerbang (gate)</b></td><td>Syarat untuk lanjut ke tahap berikutnya (strict/advisory)</td></tr>
+      <tr><td><b>Acceptance criteria</b></td><td>Kriteria yang menentukan sebuah item benar-benar selesai</td></tr>
+      <tr><td><b>Knowledge gap</b></td><td>Tahap yang dilewati tanpa catatan</td></tr>
+      <tr><td><b>Task</b></td><td>Bagian kecil pekerjaan di board, tersinkron dengan GitHub Issue</td></tr>
+      <tr><td><b>QA finding</b></td><td>Temuan bug dari QA, menjadi task berstatus Fixing</td></tr>
+      <tr><td><b>Automation rule</b></td><td>Aturan "jika ini terjadi, lakukan itu" untuk menggeser task</td></tr>
+      <tr><td><b>Knowledge Center</b></td><td>Pusat pengetahuan produk, bersumber dari GitHub Wiki dan thread</td></tr>
+      <tr><td><b>Blocked / Skipped / Not executed</b></td><td>Test yang tidak dijalankan. <b>Bukan</b> berarti lulus</td></tr>
+      <tr><td><b>Amendment</b></td><td>Perubahan scope item setelah disahkan: versi baru (paralel) atau revisi (mundur seperlunya)</td></tr>
+      <tr><td><b>Project relasi</b></td><td>Project lain yang anggotanya diberi akses ke file private project ini</td></tr>
+    </table>
+
+    <footer>Delta PMT · Buku Panduan · versi prototype (November 2026). Masukan untuk panduan ini? Sampaikan ke tim Delta PMT.</footer>
+  </main>
+</div>
+</body>
+</html>
